@@ -1,0 +1,52 @@
+{
+    "MERCURY": {
+        "mass": "0.330",
+        "diameter": "4879",
+        "density": "5429"
+    },
+    "VENUS": {
+        "mass": "4.87",
+        "diameter": "12,104",
+        "density": "5243"
+    },
+    "EARTH": {
+        "mass": "5.97",
+        "diameter": "12,756",
+        "density": "5514"
+    },
+    "MOON": {
+        "mass": "0.073",
+        "diameter": "3475",
+        "density": "3340"
+    },
+    "MARS": {
+        "mass": "0.642",
+        "diameter": "6792",
+        "density": "3934"
+    },
+    "JUPITER": {
+        "mass": "1898",
+        "diameter": "142,984",
+        "density": "1326"
+    },
+    "SATURN": {
+        "mass": "568",
+        "diameter": "120,536",
+        "density": "687"
+    },
+    "URANUS": {
+        "mass": "86.8",
+        "diameter": "51,118",
+        "density": "1270"
+    },
+    "NEPTUNE": {
+        "mass": "102",
+        "diameter": "49,528",
+        "density": "1638"
+    },
+    "PLUTO": {
+        "mass": "0.0130",
+        "diameter": "2376",
+        "density": "1850"
+    }
+}
