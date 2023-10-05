@@ -3,6 +3,9 @@ import math
 from datetime import datetime
 from skyfield.api import load
 import json
+import random
+
+from star import Star
 
 pygame.init()
 
@@ -172,6 +175,8 @@ def main():
     clock = pygame.time.Clock()
 
     planets = config_planets()
+    stars = [Star(random.randint(0, WIDTH), random.randint(0, HEIGHT)) for _ in range(100)]
+
 
     while running:
         clock.tick(60)
@@ -235,6 +240,10 @@ def main():
                 offset_x -= dx
                 offset_y -= dy
             mouse_position = drag_mouse_position
+
+        for star in stars:
+            star.update()
+            star.draw(WIND)
 
         for planet in planets:
             if not paused:
