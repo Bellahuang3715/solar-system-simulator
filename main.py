@@ -6,7 +6,7 @@ import json
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 1200, 800
 WIND = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Solar System Simulator")
 
@@ -40,9 +40,11 @@ class Planet:
     AU = 149.6e6 * 1000                 # astronomical units
     G = 6.67428e-11                     # force of attraction between objects
     SCALE = 250 / AU                    # 1AU = 100 pixels
-    TIMESTEP = 3600 * 24               # 1 day
+    TIMESTEP = 3600 * 24                # 1 day
 
-    def __init__(self, x, y, radius, colour, mass):
+    def __init__(self, name, image, x, y, radius, colour, mass):
+        self.name = name
+        self.image = image
         self.x = x
         self.y = y
         self.colour = colour
@@ -73,7 +75,10 @@ class Planet:
 
             pygame.draw.lines(window, self.colour, False, updated_points, int(2 * zoom_level))
 
-        pygame.draw.circle(window, self.colour, (x, y), radius)
+        x_pos = x - self.image.get_width() // 2
+        y_pos = y - self.image.get_height() // 2
+        window.blit(self.image, (x_pos, y_pos))
+        # pygame.draw.circle(window, self.colour, (x, y), radius)
 
         if not self.sun:
             distance_text = FONT.render(f"{round(self.distance_to_sun/1000, 1)}km", 1, WHITE)
@@ -114,7 +119,7 @@ class Planet:
 
 
 def config_planets():
-    # load data from .json (change to object later)
+    # load data from .json (change to attributes of Planet class later)
     with open('planet_data.json', 'r') as json_file:
         planets_data = json.load(json_file)
 
@@ -123,13 +128,16 @@ def config_planets():
 
     skyfield = load("de421.bsp")
 
-    sun = Planet(0, 0, 30, YELLOW, 1.98892 * 10 **30) # in kg
+    image = pygame.image.load('images/sun.png')
+    resized_img = pygame.transform.scale(image, (40, 40))
+
+    sun = Planet("sun", resized_img, 0, 0, 30, YELLOW, 1.98892 * 10 **30) # in kg
     sun.sun = True
     planets = [sun]
 
     for key, data in planets_data.items():
-        key = key + " " + 'barycenter'
-        planet_name = skyfield[key]
+        skyfield_key = key + " " + 'barycenter'
+        planet_name = skyfield[skyfield_key]
         mass = float(data["mass"])
         colour = data["colour"]
         orbital_velocity = float(data["orbital_velocity"])
@@ -139,25 +147,16 @@ def config_planets():
         apparent_positions = astrometric.observe(skyfield['sun'])
         x_pos, y_pos, _ = apparent_positions.position.au
 
-        planet = Planet(x_pos * Planet.AU, y_pos * Planet.AU, 12, colour, mass * 10 **24)
+        # load planet image
+        img_filename = f"images/{key}.png"
+        image = pygame.image.load(img_filename)
+        resized_img = pygame.transform.scale(image, (40, 40))
+
+        planet = Planet(key, resized_img, x_pos * Planet.AU, y_pos * Planet.AU, 12, colour, mass * 10 **24)
         planet.y_velocity = orbital_velocity * 1000
         planets.append(planet)
 
     return planets
-
-"""
-    earth = Planet(x_au * Planet.AU, y_au, 16, BLUE, 5.9742 * 10 **24)
-    earth.y_velocity = 29.783 * 1000 # m/s
-
-    mars = Planet(-1.524 * Planet.AU, 0, 12, RED, 6.39 * 10**23)
-    mars.y_velocity = 24.077 * 1000
-
-    mercury = Planet(0.387 * Planet.AU, 0, 8, DARK_GREY, 3.30 * 10**23)
-    mercury.y_velocity = -47.4 * 1000
-
-    venus = Planet(0.723 * Planet.AU, 0, 14, WHITE, 4.8685 * 10**24)
-    venus.y_velocity = -35.2 * 1000
-"""
 
 
 def main():
@@ -183,6 +182,8 @@ def main():
         pygame.draw.rect(WIND, LIGHT_GREY, ZOOM_OUT_BUTTON)
         WIND.blit(ZOOM_IN_TEXT, (28, 20))
         WIND.blit(ZOOM_OUT_TEXT, (90, 20))
+
+        # WIND.blit(resized, (50, 50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -235,7 +236,6 @@ def main():
                 offset_y -= dy
             mouse_position = drag_mouse_position
 
-        # if not paused:
         for planet in planets:
             if not paused:
                 planet.update_position(planets)
