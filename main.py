@@ -1,7 +1,7 @@
 import pygame 
 import math
 from datetime import datetime
-from skyfield.api import load, Topos
+from skyfield.api import load
 import json
 
 pygame.init()
@@ -19,6 +19,7 @@ DARK_GREY = (80, 78, 80)
 LIGHT_GREY = (211, 211, 211)
 
 # ------------------------ #
+
 zoom_level = 1.0
 offset_x = 0
 offset_y = 0
@@ -33,10 +34,6 @@ ZOOM_OUT_TEXT = BUTTON_FONT.render("-", True, BLACK)
 FONT = pygame.font.SysFont("comicsans", 16)
 
 # ------------------------ #
-
-# current_datetime = datetime.now()
-# print(current_datetime)
-
 
 class Planet:
 
@@ -169,7 +166,8 @@ def main():
     global zoom_level
 
     running = True
-    paused = True   # pause simulation initially
+    paused = True       # pause simulation initially
+    dragging = False    # drag and pan
 
     # synchronize simulator, regulate framerate
     clock = pygame.time.Clock()
@@ -213,15 +211,29 @@ def main():
             # mouse events
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    dragging = True
                     mouse_position = pygame.mouse.get_pos()
                     if ZOOM_IN_BUTTON.collidepoint(mouse_position):
-                        # offset_x = (offset_x + WIDTH / 2 - mouse_position[0]) / 1.1
-                        # offset_y = (offset_y + HEIGHT / 2 - mouse_position[1]) / 1.1
                         zoom_level *= 1.1
                     elif ZOOM_OUT_BUTTON.collidepoint(mouse_position):
-                        # offset_x = (offset_x + WIDTH / 2 - mouse_position[0]) / 1.1
-                        # offset_y = (offset_y + HEIGHT / 2 - mouse_position[1]) / 1.1
                         zoom_level /= 1.1
+                elif event.button == 4:     # mouse wheel up (zoom in)
+                    zoom_level *= 1.1
+                elif event.button == 5:     # mouse wheel down (zoom out)
+                    zoom_level /= 1.1
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    dragging = False
+
+        # handle mouse/mousepad drag and pan
+        if dragging:
+            drag_mouse_position = pygame.mouse.get_pos()
+            if mouse_position:
+                dx = drag_mouse_position[0] - mouse_position[0]
+                dy = drag_mouse_position[1] - mouse_position[1]
+                offset_x -= dx
+                offset_y -= dy
+            mouse_position = drag_mouse_position
 
         # if not paused:
         for planet in planets:
