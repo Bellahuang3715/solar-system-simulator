@@ -169,6 +169,7 @@ def main():
     global zoom_level
 
     running = True
+    paused = True   # pause simulation initially
 
     # synchronize simulator, regulate framerate
     clock = pygame.time.Clock()
@@ -191,8 +192,11 @@ def main():
 
             # keyboard events
             elif event.type == pygame.KEYDOWN:
+                # pause/resume simulation
+                if event.key == pygame.K_SPACE:
+                    paused = not paused
                 # adjust position
-                if event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT:
                     offset_x -= 10 / zoom_level
                 elif event.key == pygame.K_RIGHT:
                     offset_x += 10 / zoom_level
@@ -219,8 +223,10 @@ def main():
                         # offset_y = (offset_y + HEIGHT / 2 - mouse_position[1]) / 1.1
                         zoom_level /= 1.1
 
+        # if not paused:
         for planet in planets:
-            planet.update_position(planets)
+            if not paused:
+                planet.update_position(planets)
             planet.draw(WIND)
 
         pygame.display.update()
