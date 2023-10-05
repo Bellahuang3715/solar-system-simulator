@@ -1,52 +1,65 @@
 {
-    "MERCURY": {
+    "mercury": {
         "mass": "0.330",
         "diameter": "4879",
-        "density": "5429"
+        "density": "5429",
+        "orbital_velocity": "47.4",
+        "colour": [255, 255, 255]
     },
-    "VENUS": {
+    "venus": {
         "mass": "4.87",
         "diameter": "12,104",
-        "density": "5243"
+        "density": "5243",
+        "orbital_velocity": "35.0",
+        "colour": [255, 255, 255]
     },
-    "EARTH": {
+    "earth": {
         "mass": "5.97",
         "diameter": "12,756",
-        "density": "5514"
+        "density": "5514",
+        "orbital_velocity": "29.8",
+        "colour": [255, 255, 255]
     },
-    "MOON": {
-        "mass": "0.073",
-        "diameter": "3475",
-        "density": "3340"
-    },
-    "MARS": {
+    "mars": {
         "mass": "0.642",
         "diameter": "6792",
-        "density": "3934"
+        "density": "3934",
+        "orbital_velocity": "24.1",
+        "colour": [255, 255, 255]
     },
-    "JUPITER": {
+    "jupiter": {
         "mass": "1898",
         "diameter": "142,984",
-        "density": "1326"
+        "density": "1326",
+        "orbital_velocity": "13.1",
+        "colour": [255, 255, 255]
     },
-    "SATURN": {
+    "saturn": {
         "mass": "568",
         "diameter": "120,536",
-        "density": "687"
+        "density": "687",
+        "orbital_velocity": "9.7",
+        "colour": [255, 255, 255]
     },
-    "URANUS": {
+    "uranus": {
         "mass": "86.8",
         "diameter": "51,118",
-        "density": "1270"
+        "density": "1270",
+        "orbital_velocity": "6.8",
+        "colour": [255, 255, 255]
     },
-    "NEPTUNE": {
+    "neptune": {
         "mass": "102",
         "diameter": "49,528",
-        "density": "1638"
+        "density": "1638",
+        "orbital_velocity": "5.4",
+        "colour": [255, 255, 255]
     },
-    "PLUTO": {
+    "pluto": {
         "mass": "0.0130",
         "diameter": "2376",
-        "density": "1850"
+        "density": "1850",
+        "orbital_velocity": "4.7",
+        "colour": [255, 255, 255]
     }
 }

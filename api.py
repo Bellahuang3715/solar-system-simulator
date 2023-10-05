@@ -18,7 +18,7 @@ if response.status_code == 200:
     index = 1
 
     for planet in planets:
-        planet_name = planet.text.strip()
+        planet_name = planet.text.strip().lower()
 
         data = []
         for row in table.find_all("tr")[1:]:
@@ -31,6 +31,7 @@ if response.status_code == 200:
             "mass": data[0],
             "diameter": data[1],
             "density": data[2],
+            "orbital_velocity": data[11]
         }
 
     with open("planet_data.json", "w") as json_file:

@@ -1,5 +1,8 @@
 import pygame 
 import math
+from datetime import datetime
+from skyfield.api import load, Topos
+import json
 
 pygame.init()
 
@@ -27,10 +30,13 @@ BUTTON_FONT = pygame.font.Font(None, 40)
 ZOOM_IN_TEXT = BUTTON_FONT.render("+", True, BLACK)
 ZOOM_OUT_TEXT = BUTTON_FONT.render("-", True, BLACK)
 
+FONT = pygame.font.SysFont("comicsans", 16)
+
 # ------------------------ #
 
+# current_datetime = datetime.now()
+# print(current_datetime)
 
-FONT = pygame.font.SysFont("comicsans", 16)
 
 class Planet:
 
@@ -111,10 +117,39 @@ class Planet:
 
 
 def config_planets():
+    # load data from .json (change to object later)
+    with open('planet_data.json', 'r') as json_file:
+        planets_data = json.load(json_file)
+
+    ts = load.timescale()
+    t = ts.now()
+
+    skyfield = load("de421.bsp")
+
     sun = Planet(0, 0, 30, YELLOW, 1.98892 * 10 **30) # in kg
     sun.sun = True
+    planets = [sun]
 
-    earth = Planet(-1 * Planet.AU, 0, 16, BLUE, 5.9742 * 10 **24)
+    for key, data in planets_data.items():
+        key = key + " " + 'barycenter'
+        planet_name = skyfield[key]
+        mass = float(data["mass"])
+        colour = data["colour"]
+        orbital_velocity = float(data["orbital_velocity"])
+
+        # obtain position of planets relative to the Sun
+        astrometric = planet_name.at(t)
+        apparent_positions = astrometric.observe(skyfield['sun'])
+        x_pos, y_pos, _ = apparent_positions.position.au
+
+        planet = Planet(x_pos * Planet.AU, y_pos * Planet.AU, 12, colour, mass * 10 **24)
+        planet.y_velocity = orbital_velocity * 1000
+        planets.append(planet)
+
+    return planets
+
+"""
+    earth = Planet(x_au * Planet.AU, y_au, 16, BLUE, 5.9742 * 10 **24)
     earth.y_velocity = 29.783 * 1000 # m/s
 
     mars = Planet(-1.524 * Planet.AU, 0, 12, RED, 6.39 * 10**23)
@@ -125,9 +160,7 @@ def config_planets():
 
     venus = Planet(0.723 * Planet.AU, 0, 14, WHITE, 4.8685 * 10**24)
     venus.y_velocity = -35.2 * 1000
-
-    planets = [sun, earth, mars, mercury, venus]
-    return planets
+"""
 
 
 def main():
