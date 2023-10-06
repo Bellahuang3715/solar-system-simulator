@@ -11,7 +11,7 @@ from star import Star
 from planet import Planet
 
 WIDTH, HEIGHT = 1200, 800
-WIND = pygame.display.set_mode((WIDTH, HEIGHT))
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Solar System Simulator")
 
 BLACK = (0, 0, 0)
@@ -60,7 +60,7 @@ def config_planets():
         skyfield_key = key + " " + 'barycenter'
         planet_name = skyfield[skyfield_key]
         mass = float(data["mass"])
-        colour = data["colour"]
+        colour = WHITE
         orbital_velocity = float(data["orbital_velocity"])
 
         # obtain position of planets relative to the Sun
@@ -104,7 +104,31 @@ def draw_legend(planets):
     pygame.draw.rect(legend_surface, WHITE, legend_surface.get_rect(), 2)
 
     # legend surface onto main window
-    WIND.blit(legend_surface, (legend_x, 10))
+    WINDOW.blit(legend_surface, (legend_x, 10))
+
+
+def render_planet_info(planet):
+    # surface for the pop-up window
+    pop_up = pygame.Surface((300, 200))
+    pop_up.fill((0, 0, 0))
+    pop_up.set_alpha(200)  # transparency
+
+    name_text = FONT.render(planet.name, 1, WHITE)
+    distance_text = FONT.render(f"Distance to Sun: {planet.distance_to_sun / 1000:.1f} km", 1, WHITE)
+
+    pop_up.blit(name_text, (10, 10))
+    pop_up.blit(distance_text, (10, 40))
+
+    # border
+    pygame.draw.rect(pop_up, WHITE, pop_up.get_rect(), 2)
+
+    # close button
+    close_button = pygame.Rect(275, 5, 20, 20)
+    pygame.draw.line(pop_up, WHITE, (280, 10), (295, 25), 2)
+    pygame.draw.line(pop_up, WHITE, (280, 25), (295, 10), 2)
+
+    WINDOW.blit(pop_up, (WIDTH // 2 - 150, HEIGHT // 2 - 100))
+    return close_button
 
 
 def main():
@@ -113,8 +137,12 @@ def main():
     global zoom_level
 
     running = True
-    paused = True       # pause simulation initially
-    dragging = False    # drag and pan
+    paused = True               # pause simulation initially
+    dragging = False            # drag and pan
+
+    planet_selected = None      # display detailed stats in new window
+    pop_up_visible = False
+    close_button_ele = None
 
     # synchronize simulator, regulate framerate
     clock = pygame.time.Clock()
@@ -125,13 +153,13 @@ def main():
 
     while running:
         clock.tick(60)
-        WIND.fill((0, 0, 0))
+        WINDOW.fill((0, 0, 0))
 
         # draw zoom buttons
-        pygame.draw.rect(WIND, LIGHT_GREY, ZOOM_IN_BUTTON)
-        pygame.draw.rect(WIND, LIGHT_GREY, ZOOM_OUT_BUTTON)
-        WIND.blit(ZOOM_IN_TEXT, (28, 20))
-        WIND.blit(ZOOM_OUT_TEXT, (90, 20))
+        pygame.draw.rect(WINDOW, LIGHT_GREY, ZOOM_IN_BUTTON)
+        pygame.draw.rect(WINDOW, LIGHT_GREY, ZOOM_OUT_BUTTON)
+        WINDOW.blit(ZOOM_IN_TEXT, (28, 20))
+        WINDOW.blit(ZOOM_OUT_TEXT, (90, 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -162,10 +190,31 @@ def main():
                 if event.button == 1:
                     dragging = True
                     mouse_position = pygame.mouse.get_pos()
+                    # check for click on zoom buttons
                     if ZOOM_IN_BUTTON.collidepoint(mouse_position):
                         zoom_level *= 1.1
                     elif ZOOM_OUT_BUTTON.collidepoint(mouse_position):
                         zoom_level /= 1.1
+
+                    # check for click to open planet stats pop-up
+                    if WIDTH - 300 <= mouse_position[0] <= WIDTH - 50:
+                        index = (mouse_position[1] - 10) // 30
+                        if 0 <= index < len(planets):
+                            planet_selected = planets[index]
+                            pop_up_visible = True
+                            close_button_ele = render_planet_info(planet_selected)
+
+                    # check for click on close button of pop-up
+                    if close_button_ele:
+                        # coord system relative to pop-up
+                        mouse_position_rect = (
+                            mouse_position[0] - (WIDTH // 2 - 150),
+                            mouse_position[1] - (HEIGHT // 2 - 100)
+                        )
+                        if close_button_ele.collidepoint(mouse_position_rect):
+                            pop_up_visible = False
+                            planet_selected = None
+
                 elif event.button == 4:     # mouse wheel up (zoom in)
                     zoom_level *= 1.1
                 elif event.button == 5:     # mouse wheel down (zoom out)
@@ -186,14 +235,17 @@ def main():
 
         for star in stars:
             star.update()
-            star.draw(WIND)
+            star.draw(WINDOW)
 
         for planet in planets:
             if not paused:
                 planet.update_position(planets)
-            planet.draw(WIND, WIDTH, HEIGHT, offset_x, offset_y, zoom_level)
+            planet.draw(WINDOW, WIDTH, HEIGHT, offset_x, offset_y, zoom_level)
 
         draw_legend(planets)
+
+        if planet_selected and pop_up_visible:
+            close_button_ele = render_planet_info(planet_selected)
 
         pygame.display.update()
     
