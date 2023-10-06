@@ -33,7 +33,6 @@ class Planet:
     def draw(self, window, width, height, offset_x, offset_y, zoom_level):
         x = (self.x * self.SCALE + width / 2 - offset_x) * zoom_level
         y = (self.y * self.SCALE + height / 2 - offset_y) * zoom_level
-        radius = self.radius * zoom_level
 
         if len(self.orbit) > 2:
 
@@ -49,11 +48,10 @@ class Planet:
         x_pos = x - self.image.get_width() // 2
         y_pos = y - self.image.get_height() // 2
         window.blit(self.image, (x_pos, y_pos))
-        # pygame.draw.circle(window, self.colour, (x, y), radius)
 
         if not self.sun:
-            distance_text = FONT.render(f"{round(self.distance_to_sun/1000, 1)}km", 1, WHITE)
-            window.blit(distance_text, (x - distance_text.get_width()/2, y - distance_text.get_height()/2))
+            distance_text = FONT.render(self.name, 1, self.colour)
+            window.blit(distance_text, (x - distance_text.get_width()/2, 25 + y - distance_text.get_height()/2))
 
 
     def attraction(self, other):

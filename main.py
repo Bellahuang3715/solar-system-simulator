@@ -22,6 +22,8 @@ RED = (188, 39, 50)
 DARK_GREY = (80, 78, 80)
 LIGHT_GREY = (211, 211, 211)
 
+FONT = pygame.font.SysFont("comicsans", 16)
+
 # ------------------------ #
 
 zoom_level = 1.0
@@ -78,6 +80,33 @@ def config_planets():
     return planets
 
 
+def draw_legend(planets):
+    legend_x = WIDTH - 300
+    legend_y = 10
+    legend_spacing = 30
+    legend_width = 275
+    legend_height = len(planets) * legend_spacing
+
+    # surface for the legend
+    legend_surface = pygame.Surface((legend_width, legend_height))
+    legend_surface.fill((0, 0, 0))
+    legend_surface.set_alpha(200)  # transparency
+
+    for planet in planets:
+        if not planet.sun:
+            distance_text = FONT.render(f"{planet.distance_to_sun / 1000:.1f} km", 1, WHITE)
+            name_text = FONT.render(planet.name, 1, planet.colour)
+            legend_surface.blit(name_text, (10, legend_y))
+            legend_surface.blit(distance_text, (120, legend_y))
+            legend_y += legend_spacing
+
+    # border around the legend
+    pygame.draw.rect(legend_surface, WHITE, legend_surface.get_rect(), 2)
+
+    # legend surface onto main window
+    WIND.blit(legend_surface, (legend_x, 10))
+
+
 def main():
     global offset_x
     global offset_y
@@ -103,8 +132,6 @@ def main():
         pygame.draw.rect(WIND, LIGHT_GREY, ZOOM_OUT_BUTTON)
         WIND.blit(ZOOM_IN_TEXT, (28, 20))
         WIND.blit(ZOOM_OUT_TEXT, (90, 20))
-
-        # WIND.blit(resized, (50, 50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -165,6 +192,8 @@ def main():
             if not paused:
                 planet.update_position(planets)
             planet.draw(WIND, WIDTH, HEIGHT, offset_x, offset_y, zoom_level)
+
+        draw_legend(planets)
 
         pygame.display.update()
     
