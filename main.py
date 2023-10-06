@@ -7,8 +7,9 @@ import random
 
 pygame.init()
 
+from api import get_planet_data
 from star import Star
-from planet import Planet
+from planet import Planet, PlanetData
 
 WIDTH, HEIGHT = 1200, 800
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -40,10 +41,8 @@ ZOOM_OUT_TEXT = BUTTON_FONT.render("-", True, BLACK)
 # ------------------------ #
 
 def config_planets():
-    # load data from .json (change to attributes of Planet class later)
-    with open('planet_data.json', 'r') as json_file:
-        planets_data = json.load(json_file)
-
+    # load data from web scrapper
+    planets_data = get_planet_data(test=False)
     ts = load.timescale()
     t = ts.now()
 
@@ -52,17 +51,28 @@ def config_planets():
     image = pygame.image.load('images/sun.png')
     resized_img = pygame.transform.scale(image, (40, 40))
 
-    sun = Planet("sun", resized_img, 0, 0, 30, YELLOW, 1.98892 * 10 **30) # in kg
+    sun_attr = PlanetData(
+        mass = 1.98892 * 10 **30,
+        diameter = 0,
+        density = 0,
+        gravity = 0,
+        rotation_period = 0,
+        day_length = 0,
+        orbital_period = 0,
+        orbital_velocity = 0,
+        mean_temp = 0,
+    )
+
+    sun = Planet("sun", resized_img, 0, 0, 30, YELLOW, sun_attr) # in kg
     sun.sun = True
     planets = [sun]
 
     for key, data in planets_data.items():
         skyfield_key = key + " " + 'barycenter'
         planet_name = skyfield[skyfield_key]
-        mass = float(data["mass"])
         colour = WHITE
-        orbital_velocity = float(data["orbital_velocity"])
-
+        planet_attr = data
+        
         # obtain position of planets relative to the Sun
         astrometric = planet_name.at(t)
         apparent_positions = astrometric.observe(skyfield['sun'])
@@ -73,8 +83,8 @@ def config_planets():
         image = pygame.image.load(img_filename)
         resized_img = pygame.transform.scale(image, (40, 40))
 
-        planet = Planet(key, resized_img, x_pos * Planet.AU, y_pos * Planet.AU, 12, colour, mass * 10 **24)
-        planet.y_velocity = orbital_velocity * 1000
+        planet = Planet(key, resized_img, x_pos * Planet.AU, y_pos * Planet.AU, 12, colour, planet_attr)
+        planet.y_velocity = planet.get_attribute("orbital_velocity") * 1000
         planets.append(planet)
 
     return planets
@@ -85,7 +95,7 @@ def draw_legend(planets):
     legend_y = 10
     legend_spacing = 30
     legend_width = 275
-    legend_height = len(planets) * legend_spacing
+    legend_height = len(planets) * legend_spacing + legend_spacing
 
     # surface for the legend
     legend_surface = pygame.Surface((legend_width, legend_height))
@@ -93,12 +103,11 @@ def draw_legend(planets):
     legend_surface.set_alpha(200)  # transparency
 
     for planet in planets:
-        if not planet.sun:
-            distance_text = FONT.render(f"{planet.distance_to_sun / 1000:.1f} km", 1, WHITE)
-            name_text = FONT.render(planet.name, 1, planet.colour)
-            legend_surface.blit(name_text, (10, legend_y))
-            legend_surface.blit(distance_text, (120, legend_y))
-            legend_y += legend_spacing
+        distance_text = FONT.render(f"{planet.distance_to_sun / 1000:.1f} km", 1, WHITE)
+        name_text = FONT.render(planet.name, 1, WHITE)
+        legend_surface.blit(name_text, (10, legend_y))
+        legend_surface.blit(distance_text, (120, legend_y))
+        legend_y += legend_spacing
 
     # border around the legend
     pygame.draw.rect(legend_surface, WHITE, legend_surface.get_rect(), 2)

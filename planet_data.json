@@ -1,65 +1,101 @@
 {
+    "pluto": {
+        "mass": "0.0130",
+        "diameter": "2376",
+        "density": "1850",
+        "gravity": "0.7",
+        "rotation_period": "-153.3",
+        "day_length": "153.3",
+        "orbital_period": "90560",
+        "orbital_velocity": "4.7",
+        "mean_temp": "-225"
+    },
     "mercury": {
         "mass": "0.330",
         "diameter": "4879",
         "density": "5429",
+        "gravity": "3.7",
+        "rotation_period": "1407.6",
+        "day_length": "4222.6",
+        "orbital_period": "88.0",
         "orbital_velocity": "47.4",
-        "colour": [255, 255, 255]
+        "mean_temp": "167"
     },
     "venus": {
         "mass": "4.87",
-        "diameter": "12,104",
+        "diameter": "12104",
         "density": "5243",
+        "gravity": "8.9",
+        "rotation_period": "-5832.5",
+        "day_length": "2802.0",
+        "orbital_period": "224.7",
         "orbital_velocity": "35.0",
-        "colour": [255, 255, 255]
+        "mean_temp": "464"
     },
     "earth": {
         "mass": "5.97",
-        "diameter": "12,756",
+        "diameter": "12756",
         "density": "5514",
+        "gravity": "9.8",
+        "rotation_period": "23.9",
+        "day_length": "24.0",
+        "orbital_period": "365.2",
         "orbital_velocity": "29.8",
-        "colour": [255, 255, 255]
+        "mean_temp": "15"
     },
     "mars": {
         "mass": "0.642",
         "diameter": "6792",
         "density": "3934",
+        "gravity": "3.7",
+        "rotation_period": "24.6",
+        "day_length": "24.7",
+        "orbital_period": "687.0",
         "orbital_velocity": "24.1",
-        "colour": [255, 255, 255]
+        "mean_temp": "-65"
     },
     "jupiter": {
         "mass": "1898",
-        "diameter": "142,984",
+        "diameter": "142984",
         "density": "1326",
+        "gravity": "23.1",
+        "rotation_period": "9.9",
+        "day_length": "9.9",
+        "orbital_period": "4331",
         "orbital_velocity": "13.1",
-        "colour": [255, 255, 255]
+        "mean_temp": "-110"
     },
     "saturn": {
         "mass": "568",
-        "diameter": "120,536",
+        "diameter": "120536",
         "density": "687",
+        "gravity": "9.0",
+        "rotation_period": "10.7",
+        "day_length": "10.7",
+        "orbital_period": "10747",
         "orbital_velocity": "9.7",
-        "colour": [255, 255, 255]
+        "mean_temp": "-140"
     },
     "uranus": {
         "mass": "86.8",
-        "diameter": "51,118",
+        "diameter": "51118",
         "density": "1270",
+        "gravity": "8.7",
+        "rotation_period": "-17.2",
+        "day_length": "17.2",
+        "orbital_period": "30589",
         "orbital_velocity": "6.8",
-        "colour": [255, 255, 255]
+        "mean_temp": "-195"
     },
     "neptune": {
         "mass": "102",
-        "diameter": "49,528",
+        "diameter": "49528",
         "density": "1638",
+        "gravity": "11.0",
+        "rotation_period": "16.1",
+        "day_length": "16.1",
+        "orbital_period": "59800",
         "orbital_velocity": "5.4",
-        "colour": [255, 255, 255]
-    },
-    "pluto": {
-        "mass": "0.0130",
-        "diameter": "2376",
-        "density": "1850",
-        "orbital_velocity": "4.7",
-        "colour": [255, 255, 255]
+        "mean_temp": "-200"
     }
 }
