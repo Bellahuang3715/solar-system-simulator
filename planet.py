@@ -3,9 +3,17 @@ import math
 
 # pygame.init()
 
-WHITE = (255, 255, 255)
-
 class PlanetData:
+
+    mass: dict[str, float]
+    diameter: float
+    density: float
+    gravity: float
+    rotation_period: float
+    day_length: float
+    orbital_period: float
+    orbital_velocity: float
+    mean_temp: int
 
     def __init__(self, mass, diameter, density, gravity, rotation_period, day_length, orbital_period, orbital_velocity, mean_temp):
         self.mass = mass
@@ -20,6 +28,23 @@ class PlanetData:
 
 
 class Planet:
+
+    name: str
+    image: str
+    x: float
+    y: float
+    radius: float
+    colour: tuple
+    attributes = PlanetData
+
+    x_velocity: float
+    y_velocity: float
+
+    sun: bool
+    distance_to_sun: float
+    orbit: list[float]
+   
+    # --------------------------------- #
 
     AU = 149.6e6 * 1000                 # astronomical units
     G = 6.67428e-11                     # force of attraction between objects

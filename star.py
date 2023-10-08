@@ -2,6 +2,11 @@ import pygame
 import random
 
 class Star:
+
+    x: float
+    y: float
+    brightness: int
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
